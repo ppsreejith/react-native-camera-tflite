@@ -1,8 +1,8 @@
 {
-  "name": "react-native-camera",
+  "name": "react-native-camera-testing",
   "description": "A Camera component for React Native. Also reads barcodes.",
-  "version": "1.6.4",
-  "author": "Lochlan Wansbrough <lochie@live.com> (http://lwansbrough.com)",
+  "version": "0.0.1",
+  "author": "ppsreejith",
   "collective": {
     "type": "opencollective",
     "url": "https://opencollective.com/react-native-camera",
