@@ -493,6 +493,7 @@ export default class Camera extends React.Component<PropsType, StateType> {
     if (props.onModelProcessed) {
       newProps.modelProcessorEnabled = true;
     }
+    newProps.modelFile = props.modelFile || "";
 
     if (Platform.OS === 'ios') {
       delete newProps.googleVisionBarcodeType;

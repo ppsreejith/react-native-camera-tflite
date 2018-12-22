@@ -179,4 +179,9 @@ public class CameraViewManager extends ViewGroupManager<RNCameraView> {
   public void setModelProcessing(RNCameraView view, boolean modelProcessorEnabled) {
     view.setShouldProcessModel(modelProcessorEnabled);
   }
+
+  @ReactProp(name = "modelFile")
+  public void setModelFile(RNCameraView view, String modelFile) {
+    view.setModelFile(modelFile);
+  }
 }

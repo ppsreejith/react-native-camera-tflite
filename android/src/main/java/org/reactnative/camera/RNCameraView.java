@@ -29,6 +29,7 @@ import org.reactnative.camera.utils.ImageDimensions;
 import org.reactnative.camera.utils.RNFileUtils;
 import org.reactnative.facedetector.RNFaceDetector;
 import org.tensorflow.lite.Interpreter;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +64,7 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
   private RNBarcodeDetector mGoogleBarcodeDetector;
   private TextRecognizer mTextRecognizer;
   private TextRecognizer mModelProcessor;
+  private String mModelFile;
     //  private Interpreter mModelProcessor;
   private boolean mShouldDetectFaces = false;
   private boolean mShouldGoogleDetectBarcodes = false;
@@ -486,6 +488,11 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
     }
     this.mShouldProcessModel = shouldProcessModel;
     setScanning(mShouldDetectFaces || mShouldGoogleDetectBarcodes || mShouldScanBarCodes || mShouldRecognizeText || mShouldProcessModel);
+  }
+
+  public void setModelFile(String modelFile) {
+      this.mModelFile = modelFile;
+      Log.v("Model file", modelFile);
   }
 
   @Override
