@@ -36,6 +36,9 @@ repositories {
   google()
   mavenCentral()
   maven {
+    url 'https://google.bintray.com/tensorflow'
+  }
+  maven {
    url 'https://maven.google.com'
   }
   maven { url "https://jitpack.io" }
@@ -47,6 +50,7 @@ repositories {
 
 dependencies {
   compileOnly 'com.facebook.react:react-native:+'
+  compileOnly 'org.tensorflow:tensorflow-lite:+'
   compileOnly 'com.facebook.infer.annotation:infer-annotation:+'
   implementation "com.google.zxing:core:3.3.0"
   implementation "com.drewnoakes:metadata-extractor:2.9.1"
