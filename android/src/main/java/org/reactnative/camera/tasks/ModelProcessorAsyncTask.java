@@ -1,14 +1,14 @@
 package org.reactnative.camera.tasks;
 
+import org.tensorflow.lite.Interpreter;
 import java.nio.ByteBuffer;
 
-import com.google.android.gms.vision.text.TextRecognizer;
 import java.util.concurrent.TimeUnit;
 
 public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, ByteBuffer> {
 
   private ModelProcessorAsyncTaskDelegate mDelegate;
-  private TextRecognizer mModelProcessor;
+  private Interpreter mModelProcessor;
   private byte[] mImageData;
   private int mWidth;
   private int mHeight;
@@ -16,14 +16,14 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, By
 
   public ModelProcessorAsyncTask(
       ModelProcessorAsyncTaskDelegate delegate,
-      TextRecognizer textRecognizer,
+      Interpreter mModelProcessor,
       byte[] imageData,
       int width,
       int height,
       int rotation
   ) {
     mDelegate = delegate;
-    mModelProcessor = textRecognizer;
+    mModelProcessor = mModelProcessor;
     mImageData = imageData;
     mWidth = width;
     mHeight = height;
@@ -32,7 +32,7 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, By
     
   @Override
   protected ByteBuffer doInBackground(Void... ignored) {
-    if (isCancelled() || mDelegate == null || mModelProcessor == null || !mModelProcessor.isOperational()) {
+    if (isCancelled() || mDelegate == null || mModelProcessor == null) {
       return null;
     }
     try {
