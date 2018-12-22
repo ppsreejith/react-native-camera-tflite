@@ -6,6 +6,7 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import org.reactnative.frame.RNFrame;
 import org.reactnative.frame.RNFrameFactory;
+import java.util.concurrent.TimeUnit;
 
 
 public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, SparseArray<TextBlock>> {
@@ -40,6 +41,9 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, Sp
     }
 
     RNFrame frame = RNFrameFactory.buildFrame(mImageData, mWidth, mHeight, mRotation);
+    try {
+        TimeUnit.SECONDS.sleep(3);
+    } catch(Exception e) {}
     return mModelProcessor.detect(frame.getFrame());
   }
 
