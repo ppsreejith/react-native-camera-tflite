@@ -2,6 +2,8 @@ package org.reactnative.camera.events;
 
 import android.support.v4.util.Pools;
 import android.util.SparseArray;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
@@ -27,14 +29,14 @@ public class ModelProcessedEvent extends Event<ModelProcessedEvent> {
 
   private double mScaleX;
   private double mScaleY;
-  private SparseArray<TextBlock> mTextBlocks;
+  private ByteBuffer mData;
   private ImageDimensions mImageDimensions;
 
   private ModelProcessedEvent() {}
 
   public static ModelProcessedEvent obtain(
       int viewTag,
-      SparseArray<TextBlock> textBlocks,
+      ByteBuffer data,
       ImageDimensions dimensions,
       double scaleX,
       double scaleY) {
@@ -42,18 +44,18 @@ public class ModelProcessedEvent extends Event<ModelProcessedEvent> {
     if (event == null) {
       event = new ModelProcessedEvent();
     }
-    event.init(viewTag, textBlocks, dimensions, scaleX, scaleY);
+    event.init(viewTag, data, dimensions, scaleX, scaleY);
     return event;
   }
 
   private void init(
       int viewTag,
-      SparseArray<TextBlock> textBlocks,
+      ByteBuffer data,
       ImageDimensions dimensions,
       double scaleX,
       double scaleY) {
     super.init(viewTag);
-    mTextBlocks = textBlocks;
+    mData = data;
     mImageDimensions = dimensions;
     mScaleX = scaleX;
     mScaleY = scaleY;
@@ -70,59 +72,15 @@ public class ModelProcessedEvent extends Event<ModelProcessedEvent> {
   }
 
   private WritableMap serializeEventData() {
-    WritableArray textBlocksList = Arguments.createArray();
-    for (int i = 0; i < mTextBlocks.size(); ++i) {
-      TextBlock textBlock = mTextBlocks.valueAt(i);
-      WritableMap serializedTextBlock = serializeText(textBlock);
-      if (mImageDimensions.getFacing() == CameraView.FACING_FRONT) {
-        serializedTextBlock = rotateTextX(serializedTextBlock);
-      }
-      textBlocksList.pushMap(serializedTextBlock);
-    }
+    FloatBuffer fbuf = mData.asFloatBuffer();
+    float[] farray = new float[fbuf.remaining()];
+    WritableArray dataList = Arguments.fromArray(farray);
 
     WritableMap event = Arguments.createMap();
     event.putString("type", "textBlock");
-    event.putArray("textBlocks", textBlocksList);
+    event.putArray("data", dataList);
     event.putInt("target", getViewTag());
     return event;
-  }
-
-  private WritableMap serializeText(Text text) {
-    WritableMap encodedText = Arguments.createMap();
-
-    WritableArray components = Arguments.createArray();
-    for (Text component : text.getComponents()) {
-      components.pushMap(serializeText(component));
-    }
-    encodedText.putArray("components", components);
-
-    encodedText.putString("value", text.getValue());
-
-    WritableMap origin = Arguments.createMap();
-    origin.putDouble("x", text.getBoundingBox().left * this.mScaleX);
-    origin.putDouble("y", text.getBoundingBox().top * this.mScaleY);
-
-    WritableMap size = Arguments.createMap();
-    size.putDouble("width", text.getBoundingBox().width() * this.mScaleX);
-    size.putDouble("height", text.getBoundingBox().height() * this.mScaleY);
-
-    WritableMap bounds = Arguments.createMap();
-    bounds.putMap("origin", origin);
-    bounds.putMap("size", size);
-
-    encodedText.putMap("bounds", bounds);
-
-    String type_;
-    if (text instanceof TextBlock) {
-      type_ = "block";
-    } else if (text instanceof Line) {
-      type_ = "line";
-    } else /*if (text instanceof Element)*/ {
-      type_ = "element";
-    }
-    encodedText.putString("type", type_);
-
-    return encodedText;
   }
 
   private WritableMap rotateTextX(WritableMap text) {

@@ -1,10 +1,8 @@
 package org.reactnative.camera.tasks;
 
-import android.util.SparseArray;
-
-import com.google.android.gms.vision.text.TextBlock;
+import java.nio.ByteBuffer;
 
 public interface ModelProcessorAsyncTaskDelegate {
-  void onModelProcessed(SparseArray<TextBlock> textBlocks, int sourceWidth, int sourceHeight, int sourceRotation);
+  void onModelProcessed(ByteBuffer data, int sourceWidth, int sourceHeight, int sourceRotation);
   void onModelProcessorTaskCompleted();
 }
