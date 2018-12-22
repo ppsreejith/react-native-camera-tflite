@@ -175,11 +175,6 @@ public class CameraViewManager extends ViewGroupManager<RNCameraView> {
     view.setShouldRecognizeText(textRecognizerEnabled);
   }
 
-  @ReactProp(name = "modelProcessorEnabled")
-  public void setModelProcessing(RNCameraView view, boolean modelProcessorEnabled) {
-    view.setShouldProcessModel(modelProcessorEnabled);
-  }
-
   @ReactProp(name = "modelFile")
   public void setModelFile(RNCameraView view, String modelFile) {
     view.setModelFile(modelFile);
