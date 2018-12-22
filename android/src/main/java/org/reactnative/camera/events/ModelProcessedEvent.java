@@ -72,9 +72,13 @@ public class ModelProcessedEvent extends Event<ModelProcessedEvent> {
   }
 
   private WritableMap serializeEventData() {
-    FloatBuffer fbuf = mData.asFloatBuffer();
-    float[] farray = new float[fbuf.remaining()];
-    WritableArray dataList = Arguments.fromArray(farray);
+    mData.rewind();
+    byte[] byteArray = new byte[mData.capacity()];
+    mData.get(byteArray);
+    WritableArray dataList = Arguments.createArray();
+    for (byte b : byteArray) {
+        dataList.pushInt((int)b);
+    }
 
     WritableMap event = Arguments.createMap();
     event.putString("type", "textBlock");

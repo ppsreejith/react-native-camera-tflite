@@ -66,7 +66,7 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, By
     try {
         TimeUnit.SECONDS.sleep(3);
     } catch(Exception e) {}
-    ByteBuffer output = ByteBuffer.allocate(1024);
+    ByteBuffer output = ByteBuffer.allocate(1001);
     Bitmap renderBitmap = mRenderView.getBitmap(DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y);
     convertBitmapToByteBuffer(renderBitmap);
     try {
