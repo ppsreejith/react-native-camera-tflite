@@ -418,6 +418,14 @@ RNCamera uses the Google Mobile Vision frameworks for Text Recognition, you can 
 
 Method to be called when text is detected. Receives a Text Recognized Event object. The interesting value of this object is the `textBlocks` value, which is an array with objects of the [TextBlock](https://developers.google.com/android/reference/com/google/android/gms/vision/text/TextBlock) properties.
 
+### Model Processing Related props
+
+Will add more details
+
+#### `onModelProcessed`
+
+Method to be called when model is processed. Will add more details soon.
+
 ## Component instance methods
 
 #### `takePictureAsync([options]): Promise`

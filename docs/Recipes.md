@@ -4,7 +4,7 @@ The idea is to provide a list of useful snippets, links and resources to be used
 
 ## Stop Face Detection/Barcode Detection/Text Recognition
 
-You can use a state variable and use it to determine if you want to turn on or off face detection/barcode detection/text recognition.
+You can use a state variable and use it to determine if you want to turn on or off face detection/barcode detection/text recognition/model processing.
 
 Example:
 ```
@@ -15,7 +15,7 @@ const { shouldFaceDetect } = this.state;
 </RNCamera>
 ```
 
-Passing `null` to `onFaceDetected`, `onGoogleVisionBarcodesDetected`, `onTextRecognized`, `onBarCodeRead` automatically turns off the correspondent detector.
+Passing `null` to `onFaceDetected`, `onGoogleVisionBarcodesDetected`, `onTextRecognized`, `onModelProcessed`, `onBarCodeRead` automatically turns off the correspondent detector.
 
 ### Events continue if screen is mounted but not on top of stack
 
