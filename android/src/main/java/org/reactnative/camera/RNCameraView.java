@@ -1,5 +1,6 @@
 package org.reactnative.camera;
 
+import android.view.TextureView;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
@@ -185,8 +186,9 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
 
         if (willCallModelTask) {
           modelProcessorTaskLock = true;
+          TextureView renderView = (TextureView) cameraView.getView();
           ModelProcessorAsyncTaskDelegate delegate = (ModelProcessorAsyncTaskDelegate) cameraView;
-          new ModelProcessorAsyncTask(delegate, mModelProcessor, data, width, height, correctRotation).execute();
+          new ModelProcessorAsyncTask(delegate, mModelProcessor, renderView, width, height, correctRotation).execute();
         }
       }
     });
