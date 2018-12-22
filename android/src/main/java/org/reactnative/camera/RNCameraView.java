@@ -439,7 +439,7 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
     mTextRecognizer = new TextRecognizer.Builder(mThemedReactContext).build();
   }
 
-  private MappedByteBuffer loadModelFile() throws IOException{
+  private MappedByteBuffer loadModelFile() throws IOException {
     AssetFileDescriptor fileDescriptor = mThemedReactContext.getAssets().openFd(mModelFile);
     FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
     FileChannel fileChannel = inputStream.getChannel();
@@ -451,7 +451,10 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
   private void setupModelProcessor() {
     try {
       mModelProcessor = new Interpreter(loadModelFile());
-    } catch(Exception e) {}
+    } catch(Exception e) {
+        Log.v("tfmodel", "exception");
+        Log.e("tfmodel", "exception", e);
+    }
   }
 
   public void setGoogleVisionBarcodeType(int barcodeType) {
@@ -504,7 +507,6 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
     }
     this.mShouldProcessModel = shouldProcessModel;
     setScanning(mShouldDetectFaces || mShouldGoogleDetectBarcodes || mShouldScanBarCodes || mShouldRecognizeText || mShouldProcessModel);
-      Log.v("Model file", modelFile);
   }
 
   @Override

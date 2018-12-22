@@ -4,6 +4,7 @@ import org.tensorflow.lite.Interpreter;
 import java.nio.ByteBuffer;
 
 import java.util.concurrent.TimeUnit;
+import android.util.Log;
 
 public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, ByteBuffer> {
 
@@ -16,14 +17,14 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, By
 
   public ModelProcessorAsyncTask(
       ModelProcessorAsyncTaskDelegate delegate,
-      Interpreter mModelProcessor,
+      Interpreter modelProcessor,
       byte[] imageData,
       int width,
       int height,
       int rotation
   ) {
     mDelegate = delegate;
-    mModelProcessor = mModelProcessor;
+    mModelProcessor = modelProcessor;
     mImageData = imageData;
     mWidth = width;
     mHeight = height;
