@@ -8,7 +8,7 @@ import android.graphics.BitmapFactory;
 import android.view.TextureView;
 
 import java.util.concurrent.TimeUnit;
-import android.util.Log;
+import java.util.Arrays;
 
 public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, ByteBuffer> {
 
@@ -23,6 +23,7 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, By
   private int mRotation;
   static private int[] intValues = new int[DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y];
   static private ByteBuffer mImageData = ByteBuffer.allocateDirect(DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y * DIM_PIXEL_SIZE);
+  static private ByteBuffer output = ByteBuffer.allocateDirect(1001);
 
   public ModelProcessorAsyncTask(
       ModelProcessorAsyncTaskDelegate delegate,
@@ -63,17 +64,16 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, By
     if (isCancelled() || mDelegate == null || mModelProcessor == null) {
       return null;
     }
-    try {
-        TimeUnit.SECONDS.sleep(3);
-    } catch(Exception e) {}
-    ByteBuffer output = ByteBuffer.allocate(1001);
+    // try {
+    //     TimeUnit.SECONDS.sleep(3);
+    // } catch(Exception e) {}
     Bitmap renderBitmap = mRenderView.getBitmap(DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y);
     convertBitmapToByteBuffer(renderBitmap);
     try {
+        mImageData.rewind();
+        output.rewind();
         mModelProcessor.run(mImageData, output);
-    } catch (Exception e) {
-        Log.e("tfmodel", "exception", e);
-    }
+    } catch (Exception e) {}
     return output;
   }
 

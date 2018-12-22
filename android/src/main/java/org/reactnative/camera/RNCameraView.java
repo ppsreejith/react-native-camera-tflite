@@ -35,7 +35,6 @@ import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
 
 import org.tensorflow.lite.Interpreter;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -453,10 +452,7 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
   private void setupModelProcessor() {
     try {
       mModelProcessor = new Interpreter(loadModelFile());
-    } catch(Exception e) {
-        Log.v("tfmodel", "exception");
-        Log.e("tfmodel", "exception", e);
-    }
+    } catch(Exception e) {}
   }
 
   public void setGoogleVisionBarcodeType(int barcodeType) {
