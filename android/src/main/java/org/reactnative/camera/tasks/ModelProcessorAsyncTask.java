@@ -1,10 +1,9 @@
 package org.reactnative.camera.tasks;
 
 import org.tensorflow.lite.Interpreter;
+import android.os.SystemClock;
 import java.nio.ByteBuffer;
 import java.io.ByteArrayOutputStream;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.TextureView;
 
 import java.util.concurrent.TimeUnit;
@@ -12,51 +11,33 @@ import java.util.Arrays;
 
 public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, ByteBuffer> {
 
-  private static final int DIM_IMG_SIZE_X = 224;
-  private static final int DIM_IMG_SIZE_Y = 224;
-  private static final int DIM_PIXEL_SIZE = 3;
   private ModelProcessorAsyncTaskDelegate mDelegate;
   private Interpreter mModelProcessor;
-  private TextureView mRenderView;
+  private ByteBuffer mInputBuf;
+  private ByteBuffer mOutputBuf;
+  private int mModelMaxFreqms;
   private int mWidth;
   private int mHeight;
   private int mRotation;
-  static private int[] intValues = new int[DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y];
-  static private ByteBuffer mImageData = ByteBuffer.allocateDirect(DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y * DIM_PIXEL_SIZE);
-  static private ByteBuffer output = ByteBuffer.allocateDirect(1001);
 
   public ModelProcessorAsyncTask(
       ModelProcessorAsyncTaskDelegate delegate,
       Interpreter modelProcessor,
-      TextureView renderView,
+      ByteBuffer inputBuf,
+      ByteBuffer outputBuf,
+      int modelMaxFreqms,
       int width,
       int height,
       int rotation
   ) {
     mDelegate = delegate;
     mModelProcessor = modelProcessor;
-    mRenderView = renderView;
+    mInputBuf = inputBuf;
+    mOutputBuf = outputBuf;
+    mModelMaxFreqms = modelMaxFreqms;
     mWidth = width;
     mHeight = height;
     mRotation = rotation;
-  }
-
-  private void convertBitmapToByteBuffer(Bitmap bitmap) {
-    if (mImageData == null) {
-      return;
-    }
-    mImageData.rewind();
-    bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-    // Convert the image to floating point.
-    int pixel = 0;
-    for (int i = 0; i < DIM_IMG_SIZE_X; ++i) {
-      for (int j = 0; j < DIM_IMG_SIZE_Y; ++j) {
-        final int val = intValues[pixel++];
-        mImageData.put((byte) ((val >> 16) & 0xFF));
-        mImageData.put((byte) ((val >> 8) & 0xFF));
-        mImageData.put((byte) (val & 0xFF));
-      }
-    }
   }
     
   @Override
@@ -64,17 +45,20 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, By
     if (isCancelled() || mDelegate == null || mModelProcessor == null) {
       return null;
     }
-    // try {
-    //     TimeUnit.SECONDS.sleep(3);
-    // } catch(Exception e) {}
-    Bitmap renderBitmap = mRenderView.getBitmap(DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y);
-    convertBitmapToByteBuffer(renderBitmap);
     try {
-        mImageData.rewind();
-        output.rewind();
-        mModelProcessor.run(mImageData, output);
+      long startTime = SystemClock.uptimeMillis();
+      mInputBuf.rewind();
+      mOutputBuf.rewind();
+      mModelProcessor.run(mInputBuf, mOutputBuf);
+      if (mModelMaxFreqms > 0) {
+        long endTime = SystemClock.uptimeMillis();
+        long timeTaken = endTime - startTime;
+        if (timeTaken < mModelMaxFreqms) {
+          TimeUnit.MILLISECONDS.sleep(mModelMaxFreqms - timeTaken);
+        }
+      }
     } catch (Exception e) {}
-    return output;
+    return mOutputBuf;
   }
 
   @Override

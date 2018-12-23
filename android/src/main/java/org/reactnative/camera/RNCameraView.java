@@ -33,6 +33,7 @@ import android.content.res.AssetFileDescriptor;
 import java.io.FileInputStream;
 import java.nio.channels.FileChannel;
 import java.nio.MappedByteBuffer;
+import android.graphics.Bitmap;
 
 import org.tensorflow.lite.Interpreter;
 
@@ -70,6 +71,12 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
   private TextRecognizer mTextRecognizer;
   private String mModelFile;
   private Interpreter mModelProcessor;
+  private int mModelMaxFreqms;
+  private ByteBuffer mModelInput;
+  private int[] mModelViewBuf;
+  private int mModelImageDimX;
+  private int mModelImageDimY;
+  private ByteBuffer mModelOutput;
   private boolean mShouldDetectFaces = false;
   private boolean mShouldGoogleDetectBarcodes = false;
   private boolean mShouldScanBarCodes = false;
@@ -185,12 +192,30 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
 
         if (willCallModelTask) {
           modelProcessorTaskLock = true;
-          TextureView renderView = (TextureView) cameraView.getView();
+          getImageData((TextureView) cameraView.getView());
           ModelProcessorAsyncTaskDelegate delegate = (ModelProcessorAsyncTaskDelegate) cameraView;
-          new ModelProcessorAsyncTask(delegate, mModelProcessor, renderView, width, height, correctRotation).execute();
+          new ModelProcessorAsyncTask(delegate, mModelProcessor, mModelInput, mModelOutput, mModelMaxFreqms, width, height, correctRotation).execute();
         }
       }
     });
+  }
+
+  private void getImageData(TextureView view) {
+    Bitmap bitmap = view.getBitmap(mModelImageDimX, mModelImageDimY);
+    if (bitmap == null) {
+      return;
+    }
+    mModelInput.rewind();
+    bitmap.getPixels(mModelViewBuf, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+    int pixel = 0;
+    for (int i = 0; i < mModelImageDimX; ++i) {
+      for (int j = 0; j < mModelImageDimY; ++j) {
+        final int val = mModelViewBuf[pixel++];
+        mModelInput.put((byte) ((val >> 16) & 0xFF));
+        mModelInput.put((byte) ((val >> 8) & 0xFF));
+        mModelInput.put((byte) (val & 0xFF));
+      }
+    }
   }
 
   @Override
@@ -452,6 +477,12 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
   private void setupModelProcessor() {
     try {
       mModelProcessor = new Interpreter(loadModelFile());
+      mModelMaxFreqms = 1000;
+      mModelImageDimX = 224;
+      mModelImageDimY = 224;
+      mModelInput = ByteBuffer.allocateDirect(mModelImageDimX * mModelImageDimY * 3);
+      mModelViewBuf = new int[mModelImageDimX * mModelImageDimY];
+      mModelOutput = ByteBuffer.allocateDirect(1001);
     } catch(Exception e) {}
   }
 
