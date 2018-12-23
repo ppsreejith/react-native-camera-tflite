@@ -2,6 +2,7 @@ package org.reactnative.camera;
 
 import android.support.annotation.Nullable;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
@@ -175,8 +176,13 @@ public class CameraViewManager extends ViewGroupManager<RNCameraView> {
     view.setShouldRecognizeText(textRecognizerEnabled);
   }
 
-  @ReactProp(name = "modelFile")
-  public void setModelFile(RNCameraView view, String modelFile) {
-    view.setModelFile(modelFile);
+  @ReactProp(name = "modelParams")
+  public void setModelParams(RNCameraView view, ReadableMap model) {
+    String modelFile = model.getString("file");
+    int inputDimX = model.getInt("inputDimX");
+    int inputDimY = model.getInt("inputDimY");
+    int outputDim = model.getInt("outputDim");
+    int freqms = model.hasKey("freqms") ? model.getInt("freqms") : 0;
+    view.setModelFile(modelFile, inputDimX, inputDimY, outputDim, freqms);
   }
 }

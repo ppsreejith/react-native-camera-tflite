@@ -490,8 +490,8 @@ export default class Camera extends React.Component<PropsType, StateType> {
       newProps.textRecognizerEnabled = true;
     }
 
-    if (props.onModelProcessed && props.modelFile) {
-      newProps.modelFile = props.modelFile;
+    if (props.onModelProcessed && props.modelParams) {
+      newProps.modelParams = props.modelParams;
     }
 
     if (Platform.OS === 'ios') {
