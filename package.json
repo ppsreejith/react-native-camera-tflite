@@ -1,5 +1,5 @@
 {
-  "name": "react-native-camera-testing",
+  "name": "react-native-camera-tflite",
   "description": "A Camera component for React Native. Also reads barcodes.",
   "version": "0.0.1",
   "author": "ppsreejith",
