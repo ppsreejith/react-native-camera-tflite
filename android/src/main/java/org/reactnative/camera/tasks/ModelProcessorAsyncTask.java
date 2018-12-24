@@ -45,11 +45,13 @@ public class ModelProcessorAsyncTask extends android.os.AsyncTask<Void, Void, By
     if (isCancelled() || mDelegate == null || mModelProcessor == null) {
       return null;
     }
+    long startTime = SystemClock.uptimeMillis();
     try {
-      long startTime = SystemClock.uptimeMillis();
       mInputBuf.rewind();
       mOutputBuf.rewind();
       mModelProcessor.run(mInputBuf, mOutputBuf);
+    } catch (Exception e) {}
+    try {
       if (mModelMaxFreqms > 0) {
         long endTime = SystemClock.uptimeMillis();
         long timeTaken = endTime - startTime;
