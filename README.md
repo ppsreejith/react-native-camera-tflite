@@ -1,6 +1,6 @@
 Related blog [article](https://medium.com/@namar/high-performance-image-classification-with-react-native-336db0a96cd)
 
-For more information, see [react-native-camera](https://github.com/react-native-community/react-native-camera)
+For more information, see [react-native-camera](https://github.com/react-native-community/react-native-camera). All `react-native-camera` props/features should also work with this.
 
 # Real time image classification with React Native
 
